@@ -80,7 +80,7 @@ export default function Home() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4 flex justify-center text-gray-600 p-7">Work-Space Booking</h1>
-      <div className="grid grid-cols-3 gap-4 cursor-pointer">
+      <div className="grid grid-cols-3 gap-4 cursor-pointer shadow-lg">
         {desks.map((desk) => (
           <div
             key={desk.id}

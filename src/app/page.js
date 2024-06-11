@@ -79,7 +79,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 flex justify-center text-gray-600 p-7">Co-working Space Booking</h1>
+      <h1 className="text-2xl font-bold mb-4 flex justify-center text-gray-600 p-7">Work-Space Booking</h1>
       <div className="grid grid-cols-3 gap-4 cursor-pointer">
         {desks.map((desk) => (
           <div
@@ -98,11 +98,11 @@ export default function Home() {
       <div className="mt-4">
         <h2 className="text-xl font-bold mb-2 text-gray-600 p-7">Booking Details</h2>
         <div>
-          <label>Membership: </label>
+          <label className='text-gray-600'>Membership: </label>
           <select
             value={membership}
             onChange={(e) => setMembership(e.target.value)}
-            className="border p-2"
+            className="border p-2 mr-5 mb-5"
           >
             <option value="basic">Basic</option>
             <option value="premium">Premium</option>
@@ -110,18 +110,18 @@ export default function Home() {
           </select>
         </div>
         <div>
-          <label>Hours: </label>
+          <label className='text-gray-600'>Hours: </label>
           <input
             type="number"
             value={hours}
             onChange={(e) => setHours(Number(e.target.value))}
             min="1"
-            className="border p-2"
+            className="border p-2 text-gray-600 mr-5"
           />
         </div>
         <Button
           onClick={handleBooking}
-          className="bg-blue-500 text-white px-4 py-2 mt-2 mt-5"
+          className="bg-blue-500 text-white px-4 py-2 mt-5"
           variant='ghost'
         >
           Book

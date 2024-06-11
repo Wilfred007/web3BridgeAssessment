@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Button } from "@/components/ui/button"
 import Image from "next/image";
 
 const desk = [
@@ -111,19 +112,20 @@ export default function Home() {
             className="border p-2"
           />
         </div>
-        <button
+        <Button
           onClick={handleBooking}
           className="bg-blue-500 text-white px-4 py-2 mt-2 rounded-md"
+          variant='ghost'
         >
           Book
-        </button>
+        </Button>
       </div>
       <div className="mt-4">
         <h2 className="text-xl font-bold mb-2">Bookings</h2>
         <ul>
           {bookings.map((booking, index) => (
             <li key={index}>
-              Desk {booking.deskId} - {booking.membership} - {booking.hours}{" "}
+              Desk {booking.deskId} - {booking.member} - {booking.hours}{" "}
               hours - ${booking.total.toFixed(2)}
             </li>
           ))}

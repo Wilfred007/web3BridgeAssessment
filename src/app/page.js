@@ -1,48 +1,65 @@
-"use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button"
-import Image from "next/image";
 
-const desk = [
-  { id: 1, type: "individual" },
-  { id: 2, type: "individual" },
-  { id: 3, type: "individual" },
-  { id: 4, type: "individual" },
-  { id: 5, type: "individual" },
-  { id: 6, type: "individual" },
-  { id: 7, type: "individual" },
-  { id: 8, type: "individual" },
-  { id: 9, type: "individual" },
-  { id: 10, type: "individual" },
-  { id: 11, type: "team" },
-  { id: 12, type: "team" },
-  { id: 13, type: "team" },
-  { id: 14, type: "team" },
-  { id: 15, type: "team" },
-  { id: 16, type: "team" },
+"use client"
+import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button"
+
+
+const desks = [
+  { id: 1, type: 'individual' },
+  { id: 2, type: 'individual' },
+  { id: 3, type: 'individual' },
+  { id: 4, type: 'individual' },
+  { id: 5, type: 'individual' },
+  { id: 6, type: 'individual' },
+  { id: 7, type: 'individual' },
+  { id: 8, type: 'individual' },
+  { id: 9, type: 'individual' },
+  { id: 10, type: 'individual' },
+  { id: 11, type: 'team' },
+  { id: 12, type: 'team' },
+  { id: 13, type: 'team' },
+  { id: 14, type: 'team' },
+  { id: 15, type: 'team' },
 ];
 
 const membershipTiers = {
-  clay: 10,
-  silver: 15,
-  gold: 20,
+  basic: 10,
+  premium: 15,
+  executive: 20,
 };
 
 export default function Home() {
   const [bookings, setBookings] = useState([]);
-  const [chooseDesk, setChooseDesk] = useState(null);
-  const [member, setMember] = useState("clay");
+  const [selectedDesk, setSelectedDesk] = useState(null);
+  const [membership, setMembership] = useState('basic');
   const [hours, setHours] = useState(1);
 
+  useEffect(() => {
+    const savedBookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    setBookings(savedBookings);
+  }, []);
+
   const handleBooking = () => {
-    const isBooked = bookings.some((booking) => booking.deskId === chooseDesk);
-    if (isBooked) {
-      alert("Desk already booked!");
+    if (selectedDesk === null) {
+      alert('Please select a desk.');
       return;
     }
 
-    const desk = desk.find((d) => d.id === chooseDesk);
-    let pricePerHour = desk.type === "team" ? 25 : membershipTiers[member];
+    const desk = desks.find((d) => d.id === selectedDesk);
+    if (!desk) {
+      alert('Selected desk is invalid.');
+      return;
+    }
+
+    const isBooked = bookings.some(
+      (booking) => booking.deskId === selectedDesk
+    );
+    if (isBooked) {
+      alert('Desk already booked!');
+      return;
+    }
+
+    let pricePerHour = desk.type === 'team' ? 25 : membershipTiers[membership];
     let total = pricePerHour * hours;
 
     if (hours > 3) {
@@ -54,52 +71,42 @@ export default function Home() {
     const updatedBookings = [...bookings, newBooking];
     setBookings(updatedBookings);
 
-    localStorage.setItem("bookings", JSON.stringify(updatedBookings));
+    localStorage.setItem('bookings', JSON.stringify(updatedBookings));
 
     setSelectedDesk(null);
-    setHours(1);
-
-    setBookings([
-      ...bookings,
-      { deskId: chooseDesk, membership, hours, total },
-    ]);
-
-    setChooseDesk(null);
     setHours(1);
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Co-working Space Booking</h1>
-      <div className="grid grid-cols-3 gap-4">
-        {desk.map((desk) => (
+      <h1 className="text-2xl font-bold mb-4 flex justify-center text-gray-600 p-7">Co-working Space Booking</h1>
+      <div className="grid grid-cols-3 gap-4 cursor-pointer">
+        {desks.map((desk) => (
           <div
             key={desk.id}
             className={`p-4 border ${
               bookings.some((b) => b.deskId === desk.id)
-                ? "bg-red-200"
-                : "bg-green-200"
+                ? 'bg-red-500'
+                : 'bg-green-500'
             }`}
-            onClick={() => setChooseDesk(desk.id)}
+            onClick={() => setSelectedDesk(desk.id)}
           >
-            {desk.type === "individual"
-              ? `Desk ${desk.id}`
-              : `Team Desk ${desk.id}`}
+            {desk.type === 'individual' ? `Desk ${desk.id}` : `Team Desk ${desk.id}`}
           </div>
         ))}
       </div>
       <div className="mt-4">
-        <h2 className="text-xl font-bold mb-2">Booking Details</h2>
+        <h2 className="text-xl font-bold mb-2 text-gray-600 p-7">Booking Details</h2>
         <div>
           <label>Membership: </label>
           <select
-            value={member}
-            onChange={(e) => setMember(e.target.value)}
+            value={membership}
+            onChange={(e) => setMembership(e.target.value)}
             className="border p-2"
           >
-            <option value="clay">Basic</option>
-            <option value="silver">Premium</option>
-            <option value="gold">Executive</option>
+            <option value="basic">Basic</option>
+            <option value="premium">Premium</option>
+            <option value="executive">Executive</option>
           </select>
         </div>
         <div>
@@ -107,26 +114,25 @@ export default function Home() {
           <input
             type="number"
             value={hours}
-            onChange={(e) => setHours(e.target.value)}
+            onChange={(e) => setHours(Number(e.target.value))}
             min="1"
             className="border p-2"
           />
         </div>
         <Button
           onClick={handleBooking}
-          className="bg-blue-500 text-white px-4 py-2 mt-2 rounded-md"
+          className="bg-blue-500 text-white px-4 py-2 mt-2 mt-5"
           variant='ghost'
         >
           Book
         </Button>
       </div>
       <div className="mt-4">
-        <h2 className="text-xl font-bold mb-2">Bookings</h2>
+        <h2 className="text-xl font-bold mb-2 text-gray-600">Bookings</h2>
         <ul>
           {bookings.map((booking, index) => (
-            <li key={index}>
-              Desk {booking.deskId} - {booking.member} - {booking.hours}{" "}
-              hours - ${booking.total.toFixed(2)}
+            <li key={index} className='text-gray-700'>
+              Desk {booking.deskId} - {booking.membership} - {booking.hours} hours - ${booking.total.toFixed(2)}
             </li>
           ))}
         </ul>
